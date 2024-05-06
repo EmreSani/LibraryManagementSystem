@@ -1,6 +1,7 @@
 package com.tpe.service;
 
 import com.tpe.domain.Book;
+import com.tpe.dto.BookDTO;
 import com.tpe.exceptions.BookNotFoundException;
 import com.tpe.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,6 @@ public class BookService {
 
         Book book=bookRepository.findById(identity).
                 orElseThrow(()->new BookNotFoundException("Kitap bulunamadı, ID : "+identity));
-
         return book;
     }
 
@@ -42,5 +42,27 @@ public class BookService {
         Book book=getBookById(id);
         //bookRepository.delete(book);
         bookRepository.deleteById(id);
+    }
+
+    //6-b
+    public List<Book> filterBooksByTitle(String title) {
+
+        return bookRepository.findByTitle(title);
+
+    }
+
+
+    //8-b
+    public void updateBookById(Long id, BookDTO bookDTO) {
+
+        Book existingBook=getBookById(id);
+
+        //title,author,pdate
+        existingBook.setTitle(bookDTO.getTitle());
+        existingBook.setAuthor(bookDTO.getAuthor());
+        existingBook.setPublicationDate(bookDTO.getPublicationDate());
+
+        bookRepository.save(existingBook);//saveOrUpdate
+
     }
 }

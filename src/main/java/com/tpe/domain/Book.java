@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class Book {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
