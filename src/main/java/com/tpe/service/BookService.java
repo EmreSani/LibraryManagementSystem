@@ -65,4 +65,9 @@ public class BookService {
         bookRepository.save(existingBook);//saveOrUpdate
 
     }
+
+    public List<Book> listBooksByAuthorAndPublicationDate(String title, String pubDate) {
+
+        return bookRepository.findByTitleAndPubDate(title,pubDate);
+    }
 }

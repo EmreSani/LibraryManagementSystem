@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController//Body
@@ -90,6 +91,22 @@ public class BookController {
 
         return ResponseEntity.ok("Kitap başarıyla güncellendi. ID : "+id);
 
+    }
+
+    //    ÖDEV(practice):Author ve publication date ile kitapları filtereleme,
+//    örn:ismi Martin Eden ve yayın tarihi 1900 olan kitaplar
+//--> Get Books By Its Author and PublicationDate
+//--> http://localhost:8080/books/filter?title=Martin Eden&pubDate=1900
+    @GetMapping("/filter")
+    public ResponseEntity<List<Book>> listBooksByAuthorAndPublicationDate (@RequestParam("title") String title, @RequestParam("pubDate") String pubDate){
+
+        List<Book> filteredBooks = service.listBooksByAuthorAndPublicationDate(title, pubDate);
+
+        if (filteredBooks.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(filteredBooks);
+        }
     }
 
 
