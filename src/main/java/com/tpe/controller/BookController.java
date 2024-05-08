@@ -5,13 +5,16 @@ import com.tpe.domain.Book;
 import com.tpe.dto.BookDTO;
 import com.tpe.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController//Body
@@ -93,21 +96,49 @@ public class BookController {
 
     }
 
-    //    ÖDEV(practice):Author ve publication date ile kitapları filtereleme,
-//    örn:ismi Martin Eden ve yayın tarihi 1900 olan kitaplar
-//--> Get Books By Its Author and PublicationDate
-//--> http://localhost:8080/books/filter?title=Martin Eden&pubDate=1900
-    @GetMapping("/filter")
-    public ResponseEntity<List<Book>> listBooksByAuthorAndPublicationDate (@RequestParam("title") String title, @RequestParam("pubDate") String pubDate){
+    //7- Get Books With Page
+    // http://localhost:8080/books/s?page=1&size=2&sort=publicationDate&direction=ASC + GET
+    @GetMapping("/s")
+    public ResponseEntity<Page<Book>> getAllBooksWithPage(@RequestParam("page") int page,
+                                                          @RequestParam("size") int size,
+                                                          @RequestParam("sort") String sortBy,
+                                                          @RequestParam("direction") Sort.Direction direction){
 
-        List<Book> filteredBooks = service.listBooksByAuthorAndPublicationDate(title, pubDate);
+        Pageable pageable= PageRequest.of(page-1,size,Sort.by(direction,sortBy));
 
-        if (filteredBooks.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(filteredBooks);
-        }
+        Page<Book> booksWithPage=service.getAllBooksWithPage(pageable);
+
+      return ResponseEntity.ok(booksWithPage);//200
     }
+
+
+    //9- Get a Book By Its Author Using JPQL-->findByAuthor
+    // http://localhost:8080/books/a?author=AB
+    @GetMapping("/a")
+    public ResponseEntity<List<Book>> getBooksByAuthor(@RequestParam("author") String author){
+
+        List<Book> books=service.getBooksByAuthor(author);
+
+        return ResponseEntity.ok(books);
+    }
+
+    //ÖDEV://--> Get Books By Its Author and PublicationDate
+    ////--> http://localhost:8080/books/filter?author=Martin Eden&pubDate=1900
+    //findByAuthorAndPublicationDate(author, pubDate);
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<Book>> filterByTitleAndPublicationDate(@RequestParam("author") String author,
+                                                                      @RequestParam("pubDate") String pubDate){
+
+        List<Book> books=service.findBookByTitleAndPubDate(author,pubDate);
+        return ResponseEntity.ok(books); //2
+
+    }
+
+
+    //ÖDEV://--> Get Books By Its Title Which Contains a Pattern
+    //--> http://localhost:8080/books/filterbook?word=Eden
+
 
 
 
