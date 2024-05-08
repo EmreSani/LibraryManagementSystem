@@ -93,4 +93,8 @@ public class BookService {
         return bookRepository.findByTitleAndPublicationDate(author,pubDate);
 
     }
+
+    public List<Book> filterByATitle(String title) {
+        return bookRepository.findByStringContaining(title);
+    }
 }

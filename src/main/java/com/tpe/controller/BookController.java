@@ -139,7 +139,15 @@ public class BookController {
     //ÖDEV://--> Get Books By Its Title Which Contains a Pattern
     //--> http://localhost:8080/books/filterbook?word=Eden
 
+@GetMapping("/filterbook")
+    public ResponseEntity<List<Book>> filterByATitle(@RequestParam("title") String title){
 
+        List<Book> books = service.filterByATitle(title);
+
+        return ResponseEntity.ok(books);
+
+
+}
 
 
 
