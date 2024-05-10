@@ -139,15 +139,22 @@ public class BookController {
     //ÖDEV://--> Get Books By Its Title Which Contains a Pattern
     //--> http://localhost:8080/books/filterbook?word=Eden
 
-@GetMapping("/filterbook")
-    public ResponseEntity<List<Book>> filterByATitle(@RequestParam("title") String title){
-
-        List<Book> books = service.filterByATitle(title);
-
-        return ResponseEntity.ok(books);
 
 
-}
+
+    //10- Add a Book to an Owner
+    // http://localhost:8080/books/add?book=3&owner=1 + PATCH
+     @PatchMapping("/add")
+    public ResponseEntity<String> addBookToOwner(@RequestParam("book") Long bookID,
+                                                 @RequestParam("owner") Long ownerID){
+
+        service.addBookToOwner(bookID,ownerID);
+
+        return ResponseEntity.ok("Kitap üyeye eklendi.");
+     }
+
+
+
 
 
 

@@ -1,8 +1,10 @@
 package com.tpe.service;
 
 import com.tpe.domain.Book;
+import com.tpe.domain.Owner;
 import com.tpe.dto.BookDTO;
 import com.tpe.exceptions.BookNotFoundException;
+import com.tpe.exceptions.ConflictException;
 import com.tpe.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,9 @@ public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private OwnerService ownerService;
 
 
     //1-b
@@ -94,7 +99,33 @@ public class BookService {
 
     }
 
-    public List<Book> filterByATitle(String title) {
-        return bookRepository.findByStringContaining(title);
+    //10-b
+    public void addBookToOwner(Long bookID, Long ownerID) {
+
+        Book foundBook=getBookById(bookID);
+
+        Owner foundOwner=ownerService.getOwnerById(ownerID);
+
+        //belirtilen id ye sahip olan kitap daha önce ownera verilmiş mi
+        //foundOwner.getBookList().contains(foundBook);
+
+        boolean isBookExists=foundOwner.getBookList().stream().
+                anyMatch(
+                        book->book.getId().equals(bookID)
+                );//eşleşme var mı
+
+        if (isBookExists){
+            throw new ConflictException("Bu kitap zaten üyenin listesinde var. Üye ID : "+ownerID);
+        } else if (foundBook.getOwner()!=null) {
+            throw new ConflictException("Bu kitap başka bir üyenin listesinde var.");
+        }else {
+            //aktif olan kitabı belirtilen ownera ekleyebiliriz.
+            foundBook.setOwner(foundOwner);
+           // foundOwner.getBookList().add(foundBook);--->mappedBy ile yapılacak
+            bookRepository.save(foundBook);
+        }
+
     }
+
+
 }

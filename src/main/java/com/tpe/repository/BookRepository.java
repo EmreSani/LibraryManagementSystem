@@ -24,5 +24,6 @@ public interface BookRepository extends JpaRepository<Book,Long> {
     List<Book> findByTitleAndPublicationDate(String author, String pubDate);
 
 
-    List<Book> findByStringContaining(String title);
+
+
 }
